@@ -307,6 +307,15 @@ type GlobalSettings = {
 				name: string
 				roleDefinition: string
 				customInstructions?: string | undefined
+				customInstructionsPaths?:
+					| (
+							| {
+									path: string
+									isAbsolute?: boolean | undefined
+							  }
+							| string
+					  )[]
+					| undefined
 				groups: (
 					| ("read" | "edit" | "browser" | "command" | "mcp" | "modes")
 					| [

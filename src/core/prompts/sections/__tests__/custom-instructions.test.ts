@@ -2,6 +2,7 @@ import { loadRuleFiles, addCustomInstructions } from "../custom-instructions"
 import fs from "fs/promises"
 import path from "path"
 import { PathLike } from "fs"
+import { parentPort } from "worker_threads"
 
 // Mock fs/promises
 jest.mock("fs/promises")
@@ -127,8 +128,8 @@ describe("loadRuleFiles", () => {
 
 		// Simulate listing files
 		readdirMock.mockResolvedValueOnce([
-			{ name: "file1.txt", isFile: () => true },
-			{ name: "file2.txt", isFile: () => true },
+			{ name: "file1.txt", isFile: () => true, parentPath: "/fake/path/.roo/rules" },
+			{ name: "file2.txt", isFile: () => true, parentPath: "/fake/path/.roo/rules" },
 		] as any)
 
 		statMock.mockImplementation(
@@ -154,8 +155,6 @@ describe("loadRuleFiles", () => {
 		expect(result).toContain("# Rules from /fake/path/.roo/rules/file2.txt:")
 		expect(result).toContain("content of file2")
 
-		expect(statMock).toHaveBeenCalledWith("/fake/path/.roo/rules/file1.txt")
-		expect(statMock).toHaveBeenCalledWith("/fake/path/.roo/rules/file2.txt")
 		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.roo/rules/file1.txt", "utf-8")
 		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.roo/rules/file2.txt", "utf-8")
 	})
@@ -321,8 +320,8 @@ describe("addCustomInstructions", () => {
 
 		// Simulate listing files
 		readdirMock.mockResolvedValueOnce([
-			{ name: "rule1.txt", isFile: () => true },
-			{ name: "rule2.txt", isFile: () => true },
+			{ name: "rule1.txt", isFile: () => true, parentPath: "/fake/path/.roo/rules-test-mode" },
+			{ name: "rule2.txt", isFile: () => true, parentPath: "/fake/path/.roo/rules-test-mode" },
 		] as any)
 
 		statMock.mockImplementation(
@@ -356,8 +355,6 @@ describe("addCustomInstructions", () => {
 		expect(result).toContain("# Rules from /fake/path/.roo/rules-test-mode/rule2.txt:")
 		expect(result).toContain("mode specific rule 2")
 
-		expect(statMock).toHaveBeenCalledWith("/fake/path/.roo/rules-test-mode/rule1.txt")
-		expect(statMock).toHaveBeenCalledWith("/fake/path/.roo/rules-test-mode/rule2.txt")
 		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.roo/rules-test-mode/rule1.txt", "utf-8")
 		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.roo/rules-test-mode/rule2.txt", "utf-8")
 	})
@@ -422,7 +419,9 @@ describe("addCustomInstructions", () => {
 		)
 
 		// Simulate directory has files
-		readdirMock.mockResolvedValueOnce([{ name: "rule1.txt", isFile: () => true }] as any)
+		readdirMock.mockResolvedValueOnce([
+			{ name: "rule1.txt", isFile: () => true, parentPath: "/fake/path/.roo/rules-test-mode" },
+		] as any)
 		readFileMock.mockReset()
 
 		// Set up stat mock for checking files
@@ -515,9 +514,9 @@ describe("Rules directory reading", () => {
 
 		// Simulate listing files
 		readdirMock.mockResolvedValueOnce([
-			{ name: "file1.txt", isFile: () => true },
-			{ name: "file2.txt", isFile: () => true },
-			{ name: "file3.txt", isFile: () => true },
+			{ name: "file1.txt", isFile: () => true, parentPath: "/fake/path/.roo/rules" },
+			{ name: "file2.txt", isFile: () => true, parentPath: "/fake/path/.roo/rules" },
+			{ name: "file3.txt", isFile: () => true, parentPath: "/fake/path/.roo/rules" },
 		] as any)
 
 		statMock.mockImplementation((path) => {
