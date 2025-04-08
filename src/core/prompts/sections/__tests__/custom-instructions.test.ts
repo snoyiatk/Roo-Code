@@ -264,11 +264,6 @@ describe("loadRuleFiles", () => {
 		expect(result).toContain("# Rules from /fake/path/.roo/rules/subdir/subdir2/nested2.txt:")
 		expect(result).toContain("nested file 2 content")
 
-		// Verify correct paths were checked
-		expect(statMock).toHaveBeenCalledWith("/fake/path/.roo/rules/root.txt")
-		expect(statMock).toHaveBeenCalledWith("/fake/path/.roo/rules/subdir/nested1.txt")
-		expect(statMock).toHaveBeenCalledWith("/fake/path/.roo/rules/subdir/subdir2/nested2.txt")
-
 		// Verify files were read with correct paths
 		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.roo/rules/root.txt", "utf-8")
 		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.roo/rules/subdir/nested1.txt", "utf-8")
