@@ -1,0 +1,168 @@
+name: Upstream Sync
+
+permissions:
+    contents: write
+
+on:
+    schedule:
+        - cron: "0 0 * * *" # every day
+    # push:
+    #     branches:
+    #         - "main"
+    workflow_dispatch:
+
+jobs:
+    sync_latest_from_upstream:
+        name: Sync & merge from upstream
+        runs-on: ubuntu-latest
+        permissions:
+          contents: write # Required for pushing tags
+          actions: write # allow updates to GitHub Actions workflows
+
+        steps:
+            # Step 1: run a standard checkout action
+            - name: Checkout target repo
+              uses: actions/checkout@master
+              with:
+                  ref: main
+                  fetch-depth: 0
+                  token: ${{ secrets.PAT }}
+
+            - name: 1. Get current commit hash of main branch
+              id: get_prev_hash
+              run: |
+                echo "PREV_HASH=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+                echo "Previous main branch hash is: $(git rev-parse HEAD)"
+
+            # Step 2: run the sync action
+            - name: 2. Sync upstream changes
+              id: sync
+              uses: aormsby/Fork-Sync-With-Upstream-action@v3.4.1
+              with:
+                  upstream_sync_repo: RooCodeInc/Roo-Code
+                  upstream_sync_branch: main
+                  target_sync_branch: main
+                  target_repo_token: ${{ secrets.PAT }} # automatically generated, no need to set
+                  # git_pull_args: --ff-only                       # optional arg use, defaults to simple 'pull'
+                  # Set test_mode true to run tests instead of the true action!!
+                  test_mode: false
+
+            # - name: Sync check
+            #   if: failure()
+            #   run: |
+            #       echo "[Error] 由于上游仓库的 workflow 文件变更，导致 GitHub 自动暂停了本次自动更新，你需要手动 Sync Fork 一次，详细教程请查看：https://github.com/Yidadaa/ChatGPT-Next-Web/blob/main/README_CN.md#%E6%89%93%E5%BC%80%E8%87%AA%E5%8A%A8%E6%9B%B4%E6%96%B0"
+            #       echo "[Error] Due to a change in the workflow file of the upstream repository, GitHub has automatically suspended the scheduled automatic update. You need to manually sync your fork. Please refer to the detailed tutorial for instructions: https://github.com/Yidadaa/ChatGPT-Next-Web#enable-automatic-updates"
+            #       exit 1
+              
+            - name: 3. Find "Changeset version bump" commits
+              id: find_commits
+              run: |
+                echo "Searching for commits between ${{ steps.get_prev_hash.outputs.PREV_HASH }} and $(git rev-parse HEAD)..."
+                
+                # Get the list of commit hashes that match the message in the specified range
+                # The output is reversed with 'tac' so that cherry-picking happens in chronological order
+                COMMIT_LIST=$(git log ${{ steps.get_prev_hash.outputs.PREV_HASH }}..HEAD --grep="Changeset version bump" --format=%H | tac)
+                
+                if [ -z "$COMMIT_LIST" ]; then
+                  echo "No new 'Changeset version bump' commits found."
+                else
+                  echo "Found commits to merge:"
+                  echo "$COMMIT_LIST"
+                fi
+                
+                # Save the list to the step's output
+                # We need to use a special syntax to handle multi-line output
+                echo "COMMIT_LIST<<EOF" >> $GITHUB_OUTPUT
+                echo "$COMMIT_LIST" >> $GITHUB_OUTPUT
+                echo "EOF" >> $GITHUB_OUTPUT
+
+            # - name: 4. Checkout target branch
+            #   uses: actions/checkout@master
+            #   with:
+            #       ref: feat/readd-gemini-cli
+            #       fetch-depth: 0
+
+            - name: 4. Merge commits to the target branch
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                # Configure git user for this action
+                git config user.name "github-actions[bot]"
+                git config user.email "github-actions[bot]@users.noreply.github.com"
+
+                TARGET_BRANCH="feat/readd-gemini-cli"
+                COMMIT_LIST="${{ steps.find_commits.outputs.COMMIT_LIST }}"
+                
+                git fetch origin $TARGET_BRANCH || echo "Target branch '$TARGET_BRANCH' not found on remote. It will be created."
+                # Check if the branch exists on the remote.
+                if git show-ref --verify --quiet "refs/remotes/origin/$TARGET_BRANCH"; then
+                  echo "Checking out existing branch '$TARGET_BRANCH'..."
+                  # Create a local branch that tracks the remote branch
+                  git checkout -b $TARGET_BRANCH origin/$TARGET_BRANCH
+                else
+                  echo "Branch '$TARGET_BRANCH' does not exist on remote. Creating it from latest 'main'."
+                  # Create the branch from the current state of main (which was just synced)
+                  git checkout -b $TARGET_BRANCH main
+                fi
+                # --- END OF ROBUST BRANCH CREATION/CHECKOUT ---
+                  
+                # Loop through each commit hash found in the previous step
+                for BUMP_COMMIT_HASH in $COMMIT_LIST; do
+                  echo "----------------------------------------------------"
+                  echo "Processing version bump commit: $BUMP_COMMIT_HASH"
+                  
+                  # If the target branch doesn't exist locally yet, this is the first iteration.
+                  # Create it from the parent of the first bump commit to establish a common history.
+                  if ! git show-ref --verify --quiet "refs/heads/$TARGET_BRANCH"; then
+                    echo "Creating '$TARGET_BRANCH' from parent of first commit..."
+                    git checkout -b $TARGET_BRANCH ${BUMP_COMMIT_HASH}^
+                  else
+                    git checkout $TARGET_BRANCH
+                  fi
+
+                  # Create a temporary branch pointing to the exact version bump commit
+                  TEMP_BRANCH="snapshot-for-merge-$(echo $BUMP_COMMIT_HASH | cut -c1-8)"
+                  echo "Creating temporary snapshot branch '$TEMP_BRANCH' at commit $BUMP_COMMIT_HASH..."
+                  git branch -f $TEMP_BRANCH $BUMP_COMMIT_HASH # Use -f to overwrite if it somehow exists
+
+                  # Merge the temporary snapshot branch into our target branch
+                  echo "Merging '$TEMP_BRANCH' into '$TARGET_BRANCH'..."
+                  git merge $TEMP_BRANCH --no-ff --no-edit -m "Merge snapshot at version bump ${BUMP_COMMIT_HASH}"
+                  
+                  current_package_version=$(node -p "require('./src/package.json').version")
+                  git tag -a "v${current_package_version}" -m "Release v${current_package_version}"
+                  git push origin "v${current_package_version}" --no-verify
+                  echo "Successfully created and pushed git tag v${current_package_version}"
+
+                  # Clean up the temporary local branch
+                  git branch -d $TEMP_BRANCH
+                done
+
+                # After the loop, push all the new merge commits at once
+                echo "----------------------------------------------------"
+                echo "Pushing all new merge commits to '$TARGET_BRANCH'..."
+                git push origin $TARGET_BRANCH
+
+            # - name: Merge main -> feat/readd-gemini-cli
+            #   uses: devmasx/merge-branch@master
+            #   with:
+            #       type: now
+            #       from_branch: main
+            #       target_branch: feat/readd-gemini-cli
+            #       github_token: ${{ secrets.GITHUB_TOKEN }}
+
+    # merge-branch:
+    #     runs-on: ubuntu-latest
+    #     steps:
+    #         - name: checkout main
+    #           uses: actions/checkout@master
+    #           with:
+    #               ref: main
+
+    #         - name: Merge main -> feat/readd-gemini-cli
+    #           uses: devmasx/merge-branch@master
+    #           with:
+    #               type: now
+    #               from_branch: main
+    #               target_branch: feat/readd-gemini-cli
+    #               github_token: ${{ secrets.GITHUB_TOKEN }}
