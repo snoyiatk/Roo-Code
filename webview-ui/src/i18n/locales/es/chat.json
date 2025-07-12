@@ -281,7 +281,7 @@
 		}
 	},
 	"systemPromptWarning": "ADVERTENCIA: Anulación de instrucciones del sistema personalizada activa. Esto puede romper gravemente la funcionalidad y causar un comportamiento impredecible.",
-	"profileViolationWarning": "El perfil actual infringe la configuración de tu organización",
+	"profileViolationWarning": "El perfil actual no es compatible con la configuración de tu organización",
 	"shellIntegration": {
 		"title": "Advertencia de ejecución de comandos",
 		"description": "Tu comando se está ejecutando sin la integración de shell de terminal de VSCode. Para suprimir esta advertencia, puedes desactivar la integración de shell en la sección <strong>Terminal</strong> de la <settingsLink>configuración de Roo Code</settingsLink> o solucionar problemas de integración de terminal de VSCode usando el enlace de abajo.",
@@ -297,7 +297,8 @@
 	"codebaseSearch": {
 		"wantsToSearch": "Roo quiere buscar en la base de código <code>{{query}}</code>:",
 		"wantsToSearchWithPath": "Roo quiere buscar en la base de código <code>{{query}}</code> en <code>{{path}}</code>:",
-		"didSearch": "Se encontraron {{count}} resultado(s) para <code>{{query}}</code>:",
+		"didSearch_one": "Se encontró 1 resultado",
+		"didSearch_other": "Se encontraron {{count}} resultados",
 		"resultTooltip": "Puntuación de similitud: {{score}} (haz clic para abrir el archivo)"
 	},
 	"read-batch": {

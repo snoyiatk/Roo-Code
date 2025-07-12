@@ -370,11 +370,6 @@
 			"low": "Low"
 		},
 		"setReasoningLevel": "Enable Reasoning Effort",
-		"claudeCode": {
-			"pathLabel": "Claude Code Path",
-			"description": "Optional path to your Claude Code CLI. Defaults to 'claude' if not set.",
-			"placeholder": "Default: claude"
-		},
 		"geminiCli": {
 			"description": "This provider uses OAuth authentication from the Gemini CLI tool and does not require API keys.",
 			"oauthPath": "OAuth Credentials Path (optional)",
@@ -389,6 +384,13 @@
 			"requirement4": "Does not use API keys - authentication is handled via OAuth",
 			"requirement5": "Requires the Gemini CLI tool to be installed and authenticated first",
 			"freeAccess": "Free tier access via OAuth authentication"
+		},
+		"claudeCode": {
+			"pathLabel": "Claude Code Path",
+			"description": "Optional path to your Claude Code CLI. Defaults to 'claude' if not set.",
+			"placeholder": "Default: claude",
+			"maxTokensLabel": "Max Output Tokens",
+			"maxTokensDescription": "Maximum number of output tokens for Claude Code responses. Default is 8000."
 		}
 	},
 	"browser": {

@@ -281,7 +281,7 @@
 		}
 	},
 	"systemPromptWarning": "WARNUNG: Benutzerdefinierte Systemaufforderung aktiv. Dies kann die Funktionalität erheblich beeinträchtigen und zu unvorhersehbarem Verhalten führen.",
-	"profileViolationWarning": "Das aktuelle Profil verstößt gegen die Einstellungen deiner Organisation",
+	"profileViolationWarning": "Das aktuelle Profil ist nicht kompatibel mit den Einstellungen deiner Organisation",
 	"shellIntegration": {
 		"title": "Befehlsausführungswarnung",
 		"description": "Dein Befehl wird ohne VSCode Terminal-Shell-Integration ausgeführt. Um diese Warnung zu unterdrücken, kannst du die Shell-Integration im Abschnitt <strong>Terminal</strong> der <settingsLink>Roo Code Einstellungen</settingsLink> deaktivieren oder die VSCode Terminal-Integration mit dem Link unten beheben.",
@@ -297,7 +297,8 @@
 	"codebaseSearch": {
 		"wantsToSearch": "Roo möchte den Codebase nach <code>{{query}}</code> durchsuchen:",
 		"wantsToSearchWithPath": "Roo möchte den Codebase nach <code>{{query}}</code> in <code>{{path}}</code> durchsuchen:",
-		"didSearch": "{{count}} Ergebnis(se) für <code>{{query}}</code> gefunden:",
+		"didSearch_one": "1 Ergebnis gefunden",
+		"didSearch_other": "{{count}} Ergebnisse gefunden",
 		"resultTooltip": "Ähnlichkeitswert: {{score}} (klicken zum Öffnen der Datei)"
 	},
 	"read-batch": {

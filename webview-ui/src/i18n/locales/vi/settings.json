@@ -370,11 +370,6 @@
 			"low": "Thấp"
 		},
 		"setReasoningLevel": "Kích hoạt nỗ lực suy luận",
-		"claudeCode": {
-			"pathLabel": "Đường dẫn Claude Code",
-			"description": "Đường dẫn tùy chọn đến Claude Code CLI của bạn. Mặc định là 'claude' nếu không được đặt.",
-			"placeholder": "Mặc định: claude"
-		},
 		"geminiCli": {
 			"description": "Nhà cung cấp này sử dụng xác thực OAuth từ công cụ Gemini CLI và không yêu cầu khóa API.",
 			"oauthPath": "Đường dẫn Thông tin xác thực OAuth (tùy chọn)",
@@ -389,6 +384,13 @@
 			"requirement4": "Không sử dụng khóa API - xác thực được xử lý qua OAuth",
 			"requirement5": "Yêu cầu công cụ Gemini CLI được cài đặt và xác thực trước",
 			"freeAccess": "Truy cập miễn phí qua xác thực OAuth"
+		},
+		"claudeCode": {
+			"pathLabel": "Đường dẫn Claude Code",
+			"description": "Đường dẫn tùy chọn đến Claude Code CLI của bạn. Mặc định là 'claude' nếu không được đặt.",
+			"placeholder": "Mặc định: claude",
+			"maxTokensLabel": "Số token đầu ra tối đa",
+			"maxTokensDescription": "Số lượng token đầu ra tối đa cho các phản hồi của Claude Code. Mặc định là 8000."
 		}
 	},
 	"browser": {

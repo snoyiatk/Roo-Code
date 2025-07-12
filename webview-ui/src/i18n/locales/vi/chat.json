@@ -281,7 +281,7 @@
 		}
 	},
 	"systemPromptWarning": "CẢNH BÁO: Đã kích hoạt ghi đè lệnh nhắc hệ thống tùy chỉnh. Điều này có thể phá vỡ nghiêm trọng chức năng và gây ra hành vi không thể dự đoán.",
-	"profileViolationWarning": "Hồ sơ hiện tại vi phạm cài đặt của tổ chức của bạn",
+	"profileViolationWarning": "Hồ sơ hiện tại không tương thích với cài đặt của tổ chức của bạn",
 	"shellIntegration": {
 		"title": "Cảnh báo thực thi lệnh",
 		"description": "Lệnh của bạn đang được thực thi mà không có tích hợp shell terminal VSCode. Để ẩn cảnh báo này, bạn có thể vô hiệu hóa tích hợp shell trong phần <strong>Terminal</strong> của <settingsLink>cài đặt Roo Code</settingsLink> hoặc khắc phục sự cố tích hợp terminal VSCode bằng liên kết bên dưới.",
@@ -297,7 +297,8 @@
 	"codebaseSearch": {
 		"wantsToSearch": "Roo muốn tìm kiếm trong cơ sở mã cho <code>{{query}}</code>:",
 		"wantsToSearchWithPath": "Roo muốn tìm kiếm trong cơ sở mã cho <code>{{query}}</code> trong <code>{{path}}</code>:",
-		"didSearch": "Đã tìm thấy {{count}} kết quả cho <code>{{query}}</code>:",
+		"didSearch_one": "Đã tìm thấy 1 kết quả",
+		"didSearch_other": "Đã tìm thấy {{count}} kết quả",
 		"resultTooltip": "Điểm tương tự: {{score}} (nhấp để mở tệp)"
 	},
 	"read-batch": {

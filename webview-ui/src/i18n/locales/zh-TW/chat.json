@@ -281,7 +281,7 @@
 		}
 	},
 	"systemPromptWarning": "警告：自訂系統提示詞覆蓋已啟用。這可能嚴重破壞功能並導致不可預測的行為。",
-	"profileViolationWarning": "目前設定檔違反了您的組織設定",
+	"profileViolationWarning": "目前設定檔與您的組織設定不相容",
 	"shellIntegration": {
 		"title": "命令執行警告",
 		"description": "您的命令正在沒有 VSCode 終端機 shell 整合的情況下執行。要隱藏此警告，您可以在 <settingsLink>Roo Code 設定</settingsLink>的 <strong>Terminal</strong> 部分停用 shell 整合，或使用下方連結排查 VSCode 終端機整合問題。",
@@ -297,7 +297,8 @@
 	"codebaseSearch": {
 		"wantsToSearch": "Roo 想要搜尋程式碼庫：<code>{{query}}</code>",
 		"wantsToSearchWithPath": "Roo 想要在 <code>{{path}}</code> 中搜尋：<code>{{query}}</code>",
-		"didSearch": "找到 {{count}} 個結果：<code>{{query}}</code>",
+		"didSearch_one": "找到 1 個結果",
+		"didSearch_other": "找到 {{count}} 個結果",
 		"resultTooltip": "相似度評分：{{score}} (點擊開啟檔案)"
 	},
 	"read-batch": {

@@ -202,7 +202,8 @@
 	"codebaseSearch": {
 		"wantsToSearch": "Roo wants to search the codebase for <code>{{query}}</code>:",
 		"wantsToSearchWithPath": "Roo wants to search the codebase for <code>{{query}}</code> in <code>{{path}}</code>:",
-		"didSearch": "Found {{count}} result(s) for <code>{{query}}</code>:",
+		"didSearch_one": "Found 1 result",
+		"didSearch_other": "Found {{count}} results",
 		"resultTooltip": "Similarity score: {{score}} (click to open file)"
 	},
 	"commandOutput": "Command Output",
@@ -294,7 +295,7 @@
 		}
 	},
 	"systemPromptWarning": "WARNING: Custom system prompt override active. This can severely break functionality and cause unpredictable behavior.",
-	"profileViolationWarning": "The current profile violates your organization's settings",
+	"profileViolationWarning": "The current profile isn't compatible with your organization's settings",
 	"shellIntegration": {
 		"title": "Command Execution Warning",
 		"description": "Your command is being executed without VSCode terminal shell integration. To suppress this warning you can disable shell integration in the <strong>Terminal</strong> section of the <settingsLink>Roo Code settings</settingsLink> or troubleshoot VSCode terminal integration using the link below.",
