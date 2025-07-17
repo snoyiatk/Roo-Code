@@ -75,13 +75,6 @@
 		"share_task_not_found": "Task not found or access denied.",
 		"mode_import_failed": "Failed to import mode: {{error}}",
 		"delete_rules_folder_failed": "Failed to delete rules folder: {{rulesFolderPath}}. Error: {{error}}",
-		"claudeCode": {
-			"processExited": "Claude Code process exited with code {{exitCode}}.",
-			"errorOutput": "Error output: {{output}}",
-			"processExitedWithError": "Claude Code process exited with code {{exitCode}}. Error output: {{output}}",
-			"stoppedWithReason": "Claude Code stopped with reason: {{reason}}",
-			"apiKeyModelPlanMismatch": "API keys and subscription plans allow different models. Make sure the selected model is included in your plan."
-		},
 		"geminiCli": {
 			"oauthLoadFailed": "Failed to load OAuth credentials. Please authenticate first: {{error}}",
 			"tokenRefreshFailed": "Failed to refresh OAuth token: {{error}}",
@@ -91,6 +84,13 @@
 			"badRequest": "Bad request: {{details}}",
 			"apiError": "Gemini CLI API error: {{error}}",
 			"completionError": "Gemini CLI completion error: {{error}}"
+		},
+		"claudeCode": {
+			"processExited": "Claude Code process exited with code {{exitCode}}.",
+			"errorOutput": "Error output: {{output}}",
+			"processExitedWithError": "Claude Code process exited with code {{exitCode}}. Error output: {{output}}",
+			"stoppedWithReason": "Claude Code stopped with reason: {{reason}}",
+			"apiKeyModelPlanMismatch": "API keys and subscription plans allow different models. Make sure the selected model is included in your plan."
 		}
 	},
 	"warnings": {

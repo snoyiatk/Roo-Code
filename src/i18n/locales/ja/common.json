@@ -75,13 +75,6 @@
 		"share_task_not_found": "タスクが見つからないか、アクセスが拒否されました。",
 		"mode_import_failed": "モードのインポートに失敗しました：{{error}}",
 		"delete_rules_folder_failed": "ルールフォルダの削除に失敗しました：{{rulesFolderPath}}。エラー：{{error}}",
-		"claudeCode": {
-			"processExited": "Claude Code プロセスがコード {{exitCode}} で終了しました。",
-			"errorOutput": "エラー出力：{{output}}",
-			"processExitedWithError": "Claude Code プロセスがコード {{exitCode}} で終了しました。エラー出力：{{output}}",
-			"stoppedWithReason": "Claude Code が理由により停止しました：{{reason}}",
-			"apiKeyModelPlanMismatch": "API キーとサブスクリプションプランでは異なるモデルが利用可能です。選択したモデルがプランに含まれていることを確認してください。"
-		},
 		"geminiCli": {
 			"oauthLoadFailed": "OAuth認証情報の読み込みに失敗しました。まず認証してください: {{error}}",
 			"tokenRefreshFailed": "OAuthトークンの更新に失敗しました: {{error}}",
@@ -91,6 +84,13 @@
 			"badRequest": "不正なリクエスト: {{details}}",
 			"apiError": "Gemini CLI APIエラー: {{error}}",
 			"completionError": "Gemini CLI補完エラー: {{error}}"
+		},
+		"claudeCode": {
+			"processExited": "Claude Code プロセスがコード {{exitCode}} で終了しました。",
+			"errorOutput": "エラー出力：{{output}}",
+			"processExitedWithError": "Claude Code プロセスがコード {{exitCode}} で終了しました。エラー出力：{{output}}",
+			"stoppedWithReason": "Claude Code が理由により停止しました：{{reason}}",
+			"apiKeyModelPlanMismatch": "API キーとサブスクリプションプランでは異なるモデルが利用可能です。選択したモデルがプランに含まれていることを確認してください。"
 		}
 	},
 	"warnings": {

@@ -75,13 +75,6 @@
 		"share_task_not_found": "Không tìm thấy nhiệm vụ hoặc truy cập bị từ chối.",
 		"mode_import_failed": "Nhập chế độ thất bại: {{error}}",
 		"delete_rules_folder_failed": "Không thể xóa thư mục quy tắc: {{rulesFolderPath}}. Lỗi: {{error}}",
-		"claudeCode": {
-			"processExited": "Tiến trình Claude Code thoát với mã {{exitCode}}.",
-			"errorOutput": "Đầu ra lỗi: {{output}}",
-			"processExitedWithError": "Tiến trình Claude Code thoát với mã {{exitCode}}. Đầu ra lỗi: {{output}}",
-			"stoppedWithReason": "Claude Code dừng lại vì lý do: {{reason}}",
-			"apiKeyModelPlanMismatch": "Khóa API và gói đăng ký cho phép các mô hình khác nhau. Đảm bảo rằng mô hình đã chọn được bao gồm trong gói của bạn."
-		},
 		"geminiCli": {
 			"oauthLoadFailed": "Không thể tải thông tin xác thực OAuth. Vui lòng xác thực trước: {{error}}",
 			"tokenRefreshFailed": "Không thể làm mới token OAuth: {{error}}",
@@ -91,6 +84,13 @@
 			"badRequest": "Yêu cầu không hợp lệ: {{details}}",
 			"apiError": "Lỗi API Gemini CLI: {{error}}",
 			"completionError": "Lỗi hoàn thành Gemini CLI: {{error}}"
+		},
+		"claudeCode": {
+			"processExited": "Tiến trình Claude Code thoát với mã {{exitCode}}.",
+			"errorOutput": "Đầu ra lỗi: {{output}}",
+			"processExitedWithError": "Tiến trình Claude Code thoát với mã {{exitCode}}. Đầu ra lỗi: {{output}}",
+			"stoppedWithReason": "Claude Code dừng lại vì lý do: {{reason}}",
+			"apiKeyModelPlanMismatch": "Khóa API và gói đăng ký cho phép các mô hình khác nhau. Đảm bảo rằng mô hình đã chọn được bao gồm trong gói của bạn."
 		}
 	},
 	"warnings": {
