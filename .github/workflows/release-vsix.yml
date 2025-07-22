@@ -74,11 +74,14 @@ jobs:
           else
             echo "Found changelog section for version ${current_package_version}"
           fi
+          
+          # Rename the VSIX file to a standard name
+          mv bin/roo-cline-${current_package_version}.vsix bin/roo-cline.vsix
 
           # Create release with changelog content
           gh release create "v${current_package_version}" \
             --title "Release v${current_package_version}" \
             --notes "$changelog_content" \
             --target ${{ env.GIT_REF }} \
-            bin/roo-cline-${current_package_version}.vsix
+            bin/roo-cline.vsix
           echo "Successfully created GitHub Release v${current_package_version}"

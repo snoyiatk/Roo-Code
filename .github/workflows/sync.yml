@@ -35,25 +35,18 @@ jobs:
                 echo "Previous main branch hash is: $(git rev-parse HEAD)"
 
             # Step 2: run the sync action
-            - name: 2. Sync upstream changes
-              id: sync
+            - name: 2. Sync upstream changes to sync branch
+              id: sync-temp
               uses: aormsby/Fork-Sync-With-Upstream-action@v3.4.1
               with:
                   upstream_sync_repo: RooCodeInc/Roo-Code
                   upstream_sync_branch: main
-                  target_sync_branch: main
+                  target_sync_branch: main-sync
                   target_repo_token: ${{ secrets.PAT }} # automatically generated, no need to set
                   # git_pull_args: --ff-only                       # optional arg use, defaults to simple 'pull'
                   # Set test_mode true to run tests instead of the true action!!
                   test_mode: false
 
-            # - name: Sync check
-            #   if: failure()
-            #   run: |
-            #       echo "[Error] 由于上游仓库的 workflow 文件变更，导致 GitHub 自动暂停了本次自动更新，你需要手动 Sync Fork 一次，详细教程请查看：https://github.com/Yidadaa/ChatGPT-Next-Web/blob/main/README_CN.md#%E6%89%93%E5%BC%80%E8%87%AA%E5%8A%A8%E6%9B%B4%E6%96%B0"
-            #       echo "[Error] Due to a change in the workflow file of the upstream repository, GitHub has automatically suspended the scheduled automatic update. You need to manually sync your fork. Please refer to the detailed tutorial for instructions: https://github.com/Yidadaa/ChatGPT-Next-Web#enable-automatic-updates"
-            #       exit 1
-              
             - name: 3. Find "Changeset version bump" commits
               id: find_commits
               run: |
@@ -150,6 +143,21 @@ jobs:
             #       from_branch: main
             #       target_branch: feat/readd-gemini-cli
             #       github_token: ${{ secrets.GITHUB_TOKEN }}
+
+            # Step 2: run the sync action
+            # only run if previous step was successful
+            - name: 5. Sync upstream changes to main branch
+              if: success()
+              id: sync-main
+              uses: aormsby/Fork-Sync-With-Upstream-action@v3.4.1
+              with:
+                  upstream_sync_repo: RooCodeInc/Roo-Code
+                  upstream_sync_branch: main
+                  target_sync_branch: main
+                  target_repo_token: ${{ secrets.PAT }} # automatically generated, no need to set
+                  # git_pull_args: --ff-only                       # optional arg use, defaults to simple 'pull'
+                  # Set test_mode true to run tests instead of the true action!!
+                  test_mode: false
 
     # merge-branch:
     #     runs-on: ubuntu-latest
