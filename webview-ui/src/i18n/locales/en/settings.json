@@ -190,7 +190,10 @@
 			"title": "Max Requests",
 			"description": "Automatically make this many API requests before asking for approval to continue with the task.",
 			"unlimited": "Unlimited"
-		}
+		},
+		"toggleAriaLabel": "Toggle auto-approval",
+		"disabledAriaLabel": "Auto-approval disabled - select options first",
+		"selectOptionsFirst": "Select at least one option below to enable auto-approval"
 	},
 	"providers": {
 		"providerDocumentation": "{{provider}} documentation",
@@ -366,6 +369,12 @@
 		"rateLimitSeconds": {
 			"label": "Rate limit",
 			"description": "Minimum time between API requests."
+		},
+		"consecutiveMistakeLimit": {
+			"label": "Error & Repetition Limit",
+			"description": "Number of consecutive errors or repeated actions before showing 'Roo is having trouble' dialog",
+			"unlimitedDescription": "Unlimited retries enabled (auto-proceed). The dialog will never appear.",
+			"warning": "⚠️ Setting to 0 allows unlimited retries which may consume significant API usage"
 		},
 		"reasoningEffort": {
 			"label": "Model Reasoning Effort",
@@ -550,6 +559,9 @@
 			"label": "Inherit environment variables",
 			"description": "When enabled, the terminal will inherit environment variables from VSCode's parent process, such as user-profile-defined shell integration settings. This directly toggles VSCode global setting `terminal.integrated.inheritEnv`. <0>Learn more</0>"
 		}
+	},
+	"advancedSettings": {
+		"title": "Advanced settings"
 	},
 	"advanced": {
 		"diff": {

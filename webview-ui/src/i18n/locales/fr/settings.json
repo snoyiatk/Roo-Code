@@ -123,6 +123,9 @@
 	},
 	"autoApprove": {
 		"description": "Permettre à Roo d'effectuer automatiquement des opérations sans requérir d'approbation. Activez ces paramètres uniquement si vous faites entièrement confiance à l'IA et que vous comprenez les risques de sécurité associés.",
+		"toggleAriaLabel": "Activer/désactiver l'approbation automatique",
+		"disabledAriaLabel": "Approbation automatique désactivée - sélectionnez d'abord les options",
+		"selectOptionsFirst": "Sélectionnez au moins une option ci-dessous pour activer l'approbation automatique",
 		"readOnly": {
 			"label": "Lecture",
 			"description": "Lorsque cette option est activée, Roo affichera automatiquement le contenu des répertoires et lira les fichiers sans que vous ayez à cliquer sur le bouton Approuver.",
@@ -367,6 +370,12 @@
 			"label": "Limite de débit",
 			"description": "Temps minimum entre les requêtes API."
 		},
+		"consecutiveMistakeLimit": {
+			"label": "Limite d'erreurs et de répétitions",
+			"description": "Nombre d'erreurs consécutives ou d'actions répétées avant d'afficher la boîte de dialogue 'Roo a des difficultés'",
+			"unlimitedDescription": "Réessais illimités activés (poursuite automatique). La boîte de dialogue n'apparaîtra jamais.",
+			"warning": "⚠️ Mettre à 0 autorise des réessais illimités, ce qui peut consommer une utilisation importante de l'API"
+		},
 		"reasoningEffort": {
 			"label": "Effort de raisonnement du modèle",
 			"high": "Élevé",
@@ -535,6 +544,9 @@
 			"label": "Hériter des variables d'environnement",
 			"description": "Lorsqu'activé, le terminal hérite des variables d'environnement du processus parent VSCode, comme les paramètres d'intégration du shell définis dans le profil utilisateur. Cela bascule directement le paramètre global VSCode `terminal.integrated.inheritEnv`. <0>En savoir plus</0>"
 		}
+	},
+	"advancedSettings": {
+		"title": "Paramètres avancés"
 	},
 	"advanced": {
 		"diff": {
