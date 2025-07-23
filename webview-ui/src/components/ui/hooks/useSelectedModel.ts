@@ -8,6 +8,8 @@ import {
 	bedrockModels,
 	deepSeekDefaultModelId,
 	deepSeekModels,
+	moonshotDefaultModelId,
+	moonshotModels,
 	geminiDefaultModelId,
 	geminiModels,
 	geminiCliDefaultModelId,
@@ -169,6 +171,11 @@ function getSelectedModel({
 			const info = deepSeekModels[id as keyof typeof deepSeekModels]
 			return { id, info }
 		}
+		case "moonshot": {
+			const id = apiConfiguration.apiModelId ?? moonshotDefaultModelId
+			const info = moonshotModels[id as keyof typeof moonshotModels]
+			return { id, info }
+		}
 		case "openai-native": {
 			const id = apiConfiguration.apiModelId ?? openAiNativeDefaultModelId
 			const info = openAiNativeModels[id as keyof typeof openAiNativeModels]
@@ -218,6 +225,7 @@ function getSelectedModel({
 		// case "human-relay":
 		// case "fake-ai":
 		default: {
+			provider satisfies "anthropic" | "gemini-cli" | "human-relay" | "fake-ai"
 			const id = apiConfiguration.apiModelId ?? anthropicDefaultModelId
 			const info = anthropicModels[id as keyof typeof anthropicModels]
 			return { id, info }

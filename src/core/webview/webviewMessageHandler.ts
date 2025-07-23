@@ -1049,8 +1049,29 @@ export const webviewMessageHandler = async (
 			await provider.postStateToWebview()
 			break
 		case "terminalOutputLineLimit":
-			await updateGlobalState("terminalOutputLineLimit", message.value)
-			await provider.postStateToWebview()
+			// Validate that the line limit is a positive number
+			const lineLimit = message.value
+			if (typeof lineLimit === "number" && lineLimit > 0) {
+				await updateGlobalState("terminalOutputLineLimit", lineLimit)
+				await provider.postStateToWebview()
+			} else {
+				vscode.window.showErrorMessage(
+					t("common:errors.invalid_line_limit") || "Terminal output line limit must be a positive number",
+				)
+			}
+			break
+		case "terminalOutputCharacterLimit":
+			// Validate that the character limit is a positive number
+			const charLimit = message.value
+			if (typeof charLimit === "number" && charLimit > 0) {
+				await updateGlobalState("terminalOutputCharacterLimit", charLimit)
+				await provider.postStateToWebview()
+			} else {
+				vscode.window.showErrorMessage(
+					t("common:errors.invalid_character_limit") ||
+						"Terminal output character limit must be a positive number",
+				)
+			}
 			break
 		case "terminalShellIntegrationTimeout":
 			await updateGlobalState("terminalShellIntegrationTimeout", message.value)
@@ -1261,6 +1282,11 @@ export const webviewMessageHandler = async (
 			await provider.postStateToWebview()
 			break
 		case "updateCondensingPrompt":
+			// Store the condensing prompt in customSupportPrompts["CONDENSE"] instead of customCondensingPrompt
+			const currentSupportPrompts = getGlobalState("customSupportPrompts") ?? {}
+			const updatedSupportPrompts = { ...currentSupportPrompts, CONDENSE: message.text }
+			await updateGlobalState("customSupportPrompts", updatedSupportPrompts)
+			// Also update the old field for backward compatibility during migration
 			await updateGlobalState("customCondensingPrompt", message.text)
 			await provider.postStateToWebview()
 			break
@@ -1970,6 +1996,12 @@ export const webviewMessageHandler = async (
 						settings.codebaseIndexGeminiApiKey,
 					)
 				}
+				if (settings.codebaseIndexMistralApiKey !== undefined) {
+					await provider.contextProxy.storeSecret(
+						"codebaseIndexMistralApiKey",
+						settings.codebaseIndexMistralApiKey,
+					)
+				}
 
 				// Send success response first - settings are saved regardless of validation
 				await provider.postMessageToWebview({
@@ -2062,6 +2094,7 @@ export const webviewMessageHandler = async (
 				"codebaseIndexOpenAiCompatibleApiKey",
 			))
 			const hasGeminiApiKey = !!(await provider.context.secrets.get("codebaseIndexGeminiApiKey"))
+			const hasMistralApiKey = !!(await provider.context.secrets.get("codebaseIndexMistralApiKey"))
 
 			provider.postMessageToWebview({
 				type: "codeIndexSecretStatus",
@@ -2070,6 +2103,7 @@ export const webviewMessageHandler = async (
 					hasQdrantApiKey,
 					hasOpenAiCompatibleApiKey,
 					hasGeminiApiKey,
+					hasMistralApiKey,
 				},
 			})
 			break
