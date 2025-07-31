@@ -79,11 +79,13 @@ jobs:
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
+                TARGET_BRANCH="feat/readd-gemini-cli"
+                MAIN_BRANCH="main"
+
                 # Configure git user for this action
                 git config user.name "github-actions[bot]"
                 git config user.email "github-actions[bot]@users.noreply.github.com"
 
-                TARGET_BRANCH="feat/readd-gemini-cli"
                 COMMIT_LIST="${{ steps.find_commits.outputs.COMMIT_LIST }}"
                 
                 git fetch origin $TARGET_BRANCH || echo "Target branch '$TARGET_BRANCH' not found on remote. It will be created."
@@ -93,9 +95,9 @@ jobs:
                   # Create a local branch that tracks the remote branch
                   git checkout -b $TARGET_BRANCH origin/$TARGET_BRANCH
                 else
-                  echo "Branch '$TARGET_BRANCH' does not exist on remote. Creating it from latest 'main'."
+                  echo "Branch '$TARGET_BRANCH' does not exist on remote. Creating it from latest '$MAIN_BRANCH'."
                   # Create the branch from the current state of main (which was just synced)
-                  git checkout -b $TARGET_BRANCH main
+                  git checkout -b $TARGET_BRANCH $MAIN_BRANCH
                 fi
                 # --- END OF ROBUST BRANCH CREATION/CHECKOUT ---
                   
@@ -113,22 +115,47 @@ jobs:
                     git checkout $TARGET_BRANCH
                   fi
 
-                  # Create a temporary branch pointing to the exact version bump commit
-                  TEMP_BRANCH="snapshot-for-merge-$(echo $BUMP_COMMIT_HASH | cut -c1-8)"
-                  echo "Creating temporary snapshot branch '$TEMP_BRANCH' at commit $BUMP_COMMIT_HASH..."
-                  git branch -f $TEMP_BRANCH $BUMP_COMMIT_HASH # Use -f to overwrite if it somehow exists
-
+                  git branch -f $MAIN_BRANCH $BUMP_COMMIT_HASH # Use -f to overwrite if it somehow exists
                   # Merge the temporary snapshot branch into our target branch
-                  echo "Merging '$TEMP_BRANCH' into '$TARGET_BRANCH'..."
-                  git merge $TEMP_BRANCH --no-ff --no-edit -m "Merge snapshot at version bump ${BUMP_COMMIT_HASH}"
+                  echo "Merging '$MAIN_BRANCH' into '$TARGET_BRANCH'..."
+                  # Merge the temporary snapshot branch into our target branch
+                  echo "Merging '$MAIN_BRANCH' into '$TARGET_BRANCH'..."
+                  set +e
+                  if ! git merge $MAIN_BRANCH --no-ff --no-edit -m "Merge snapshot at version bump ${BUMP_COMMIT_HASH}"; then
+                    echo "Merge conflict detected. Attempting to resolve for 'locales' directory..."
+
+                    # List all conflicting files
+                    CONFLICTING_FILES=$(git diff --name-only --diff-filter=U)
+
+                    # Check for conflicts outside of the 'locales' directory
+                    NON_LOCALES_CONFLICTS=$(echo "$CONFLICTING_FILES" | grep -v '^locales/')
+
+                    if [ -n "$NON_LOCALES_CONFLICTS" ]; then
+                      echo "Error: Unresolvable conflicts outside of the 'locales' directory:"
+                      echo "$NON_LOCALES_CONFLICTS"
+                      exit 1
+                    fi
+
+                    # Resolve conflicts in the 'locales' directory by accepting "theirs"
+                    LOCALE_CONFLICTS=$(echo "$CONFLICTING_FILES" | grep '^locales/')
+                    if [ -n "$LOCALE_CONFLICTS" ]; then
+                      echo "Resolving conflicts in 'locales' by accepting 'theirs'..."
+                      for file in $LOCALE_CONFLICTS; do
+                        echo "Accepting 'theirs' for $file"
+                        git checkout --theirs "$file"
+                        git add "$file"
+                      done
+                    fi
+
+                    # Commit the resolved merge
+                    git commit --no-edit
+                  fi
+                  set -e
                   
                   current_package_version=$(node -p "require('./src/package.json').version")
                   git tag -a "v${current_package_version}" -m "Release v${current_package_version}"
-                  git push origin "v${current_package_version}" --no-verify
-                  echo "Successfully created and pushed git tag v${current_package_version}"
-
-                  # Clean up the temporary local branch
-                  git branch -d $TEMP_BRANCH
+                  git push origin "$MAIN_BRANCH" "v${current_package_version}" --no-verify
+                  echo "Successfully created and pushed git version v${current_package_version}"
                 done
 
                 # After the loop, push all the new merge commits at once
