@@ -154,14 +154,9 @@ jobs:
                   
                   current_package_version=$(node -p "require('./src/package.json').version")
                   git tag -a "v${current_package_version}" -m "Release v${current_package_version}"
-                  git push origin "$MAIN_BRANCH" "v${current_package_version}" --no-verify
+                  git push origin "$MAIN_BRANCH" "$TARGET_BRANCH" "v${current_package_version}" --no-verify
                   echo "Successfully created and pushed git version v${current_package_version}"
                 done
-
-                # After the loop, push all the new merge commits at once
-                echo "----------------------------------------------------"
-                echo "Pushing all new merge commits to '$TARGET_BRANCH'..."
-                git push origin $TARGET_BRANCH
 
             # - name: Merge main -> feat/readd-gemini-cli
             #   uses: devmasx/merge-branch@master

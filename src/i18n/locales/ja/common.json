@@ -71,16 +71,6 @@
 		"share_task_not_found": "タスクが見つからないか、アクセスが拒否されました。",
 		"mode_import_failed": "モードのインポートに失敗しました：{{error}}",
 		"delete_rules_folder_failed": "ルールフォルダの削除に失敗しました：{{rulesFolderPath}}。エラー：{{error}}",
-		"geminiCli": {
-			"oauthLoadFailed": "OAuth認証情報の読み込みに失敗しました。まず認証してください: {{error}}",
-			"tokenRefreshFailed": "OAuthトークンの更新に失敗しました: {{error}}",
-			"onboardingTimeout": "オンボーディング操作が60秒でタイムアウトしました。後でもう一度お試しください。",
-			"projectDiscoveryFailed": "プロジェクトIDを発見できませんでした。'gemini auth'で認証されていることを確認してください。",
-			"rateLimitExceeded": "レート制限を超過しました。無料プランの制限に達しています。",
-			"badRequest": "不正なリクエスト: {{details}}",
-			"apiError": "Gemini CLI APIエラー: {{error}}",
-			"completionError": "Gemini CLI補完エラー: {{error}}"
-		},
 		"claudeCode": {
 			"processExited": "Claude Code プロセスがコード {{exitCode}} で終了しました。",
 			"errorOutput": "エラー出力：{{output}}",
