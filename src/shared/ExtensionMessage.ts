@@ -19,6 +19,15 @@ import { Mode } from "./modes"
 import { RouterModels } from "./api"
 import type { MarketplaceItem } from "@roo-code/types"
 
+// Command interface for frontend/backend communication
+export interface Command {
+	name: string
+	source: "global" | "project"
+	filePath?: string
+	description?: string
+	argumentHint?: string
+}
+
 // Type for marketplace installed metadata
 export interface MarketplaceInstalledMetadata {
 	project: Record<string, { type: string }>
@@ -109,6 +118,8 @@ export interface ExtensionMessage {
 		| "codeIndexSecretStatus"
 		| "showDeleteMessageDialog"
 		| "showEditMessageDialog"
+		| "commands"
+		| "insertTextIntoTextarea"
 	text?: string
 	payload?: any // Add a generic payload for now, can refine later
 	action?:
@@ -180,6 +191,7 @@ export interface ExtensionMessage {
 	settings?: any
 	messageTs?: number
 	context?: string
+	commands?: Command[]
 }
 
 export type ExtensionState = Pick<
@@ -273,6 +285,8 @@ export type ExtensionState = Pick<
 	maxWorkspaceFiles: number // Maximum number of files to include in current working directory details (0-500)
 	showRooIgnoredFiles: boolean // Whether to show .rooignore'd files in listings
 	maxReadFileLine: number // Maximum number of lines to read from a file before truncating
+	maxImageFileSize: number // Maximum size of image files to process in MB
+	maxTotalImageSize: number // Maximum total size for all images in a single read operation in MB
 
 	experiments: Experiments // Map of experiment IDs to their enabled state
 
