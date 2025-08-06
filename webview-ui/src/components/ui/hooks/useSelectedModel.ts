@@ -42,6 +42,12 @@ import {
 	sambaNovaDefaultModelId,
 	doubaoModels,
 	doubaoDefaultModelId,
+	internationalZAiDefaultModelId,
+	mainlandZAiDefaultModelId,
+	internationalZAiModels,
+	mainlandZAiModels,
+	fireworksModels,
+	fireworksDefaultModelId,
 } from "@roo-code/types"
 
 import type { ModelRecord, RouterModels } from "@roo/api"
@@ -210,6 +216,14 @@ function getSelectedModel({
 			const info = moonshotModels[id as keyof typeof moonshotModels]
 			return { id, info }
 		}
+		case "zai": {
+			const isChina = apiConfiguration.zaiApiLine === "china"
+			const models = isChina ? mainlandZAiModels : internationalZAiModels
+			const defaultModelId = isChina ? mainlandZAiDefaultModelId : internationalZAiDefaultModelId
+			const id = apiConfiguration.apiModelId ?? defaultModelId
+			const info = models[id as keyof typeof models]
+			return { id, info }
+		}
 		case "openai-native": {
 			const id = apiConfiguration.apiModelId ?? openAiNativeDefaultModelId
 			const info = openAiNativeModels[id as keyof typeof openAiNativeModels]
@@ -258,11 +272,16 @@ function getSelectedModel({
 		case "cerebras": {
 			const id = apiConfiguration.apiModelId ?? cerebrasDefaultModelId
 			const info = cerebrasModels[id as keyof typeof cerebrasModels]
-      return { id, info }
+			return { id, info }
 		}
 		case "sambanova": {
 			const id = apiConfiguration.apiModelId ?? sambaNovaDefaultModelId
 			const info = sambaNovaModels[id as keyof typeof sambaNovaModels]
+			return { id, info }
+		}
+		case "fireworks": {
+			const id = apiConfiguration.apiModelId ?? fireworksDefaultModelId
+			const info = fireworksModels[id as keyof typeof fireworksModels]
 			return { id, info }
 		}
 		// case "anthropic":

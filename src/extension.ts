@@ -76,12 +76,25 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	// Initialize Roo Code Cloud service.
 	const cloudService = await CloudService.createInstance(context, cloudLogger)
+
+	try {
+		if (cloudService.telemetryClient) {
+			TelemetryService.instance.register(cloudService.telemetryClient)
+		}
+	} catch (error) {
+		outputChannel.appendLine(
+			`[CloudService] Failed to register TelemetryClient: ${error instanceof Error ? error.message : String(error)}`,
+		)
+	}
+
 	const postStateListener = () => {
 		ClineProvider.getVisibleInstance()?.postStateToWebview()
 	}
+
 	cloudService.on("auth-state-changed", postStateListener)
 	cloudService.on("user-info", postStateListener)
 	cloudService.on("settings-updated", postStateListener)
+
 	// Add to subscriptions for proper cleanup on deactivate
 	context.subscriptions.push(cloudService)
 
@@ -103,22 +116,28 @@ export async function activate(context: vscode.ExtensionContext) {
 	}
 
 	const contextProxy = await ContextProxy.getInstance(context)
-	const codeIndexManager = CodeIndexManager.getInstance(context)
 
-	try {
-		await codeIndexManager?.initialize(contextProxy)
-	} catch (error) {
-		outputChannel.appendLine(
-			`[CodeIndexManager] Error during background CodeIndexManager configuration/indexing: ${error.message || error}`,
-		)
+	// Initialize code index managers for all workspace folders
+	const codeIndexManagers: CodeIndexManager[] = []
+	if (vscode.workspace.workspaceFolders) {
+		for (const folder of vscode.workspace.workspaceFolders) {
+			const manager = CodeIndexManager.getInstance(context, folder.uri.fsPath)
+			if (manager) {
+				codeIndexManagers.push(manager)
+				try {
+					await manager.initialize(contextProxy)
+				} catch (error) {
+					outputChannel.appendLine(
+						`[CodeIndexManager] Error during background CodeIndexManager configuration/indexing for ${folder.uri.fsPath}: ${error.message || error}`,
+					)
+				}
+				context.subscriptions.push(manager)
+			}
+		}
 	}
 
-	const provider = new ClineProvider(context, outputChannel, "sidebar", contextProxy, codeIndexManager, mdmService)
+	const provider = new ClineProvider(context, outputChannel, "sidebar", contextProxy, mdmService)
 	TelemetryService.instance.setProvider(provider)
-
-	if (codeIndexManager) {
-		context.subscriptions.push(codeIndexManager)
-	}
 
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider(ClineProvider.sideBarId, provider, {
