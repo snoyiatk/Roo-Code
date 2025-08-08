@@ -1,11 +1,24 @@
 # Roo Code Changelog
 
+## [3.25.8] - 2025-08-06
+
+- Fix: Prevent disabled MCP servers from starting processes and show correct status (#6036 by @hannesrudolph, PR by @app/roomote)
+- Fix: Handle current directory path "." correctly in codebase_search tool (#6514 by @hannesrudolph, PR by @app/roomote)
+- Fix: Trim whitespace from OpenAI base URL to fix model detection (#6559 by @vauhochzett, PR by @app/roomote)
+- Feat: Reduce Gemini 2.5 Pro minimum thinking budget to 128 (thanks @app/roomote!)
+- Fix: Improve handling of net::ERR_ABORTED errors in URL fetching (#6632 by @QuinsZouls, PR by @app/roomote)
+- Fix: Recover from error state when Qdrant becomes available (#6660 by @hannesrudolph, PR by @app/roomote)
+- Fix: Resolve memory leak in ChatView virtual scrolling implementation (thanks @xyOz-dev!)
+- Add: Swift files to fallback list (#5857 by @niteshbalusu11, #6555 by @sealad886, PR by @niteshbalusu11)
+- Feat: Clamp default model max tokens to 20% of context window (thanks @mrubens!)
+
 ## [3.25.7] - 2025-08-05
 
 - Add support for Claude Opus 4.1
 - Add Fireworks AI provider (#6653 by @ershang-fireworks, PR by @ershang-fireworks)
 - Add Z AI provider (thanks @jues!)
 - Add Groq support for GPT-OSS
+- Add Cerebras support for GPT-OSS
 - Add code indexing support for multiple folders similar to task history (#6197 by @NaccOll, PR by @NaccOll)
 - Make mode selection dropdowns responsive (#6423 by @AyazKaan, PR by @AyazKaan)
 - Redesigned task header and task history (thanks @brunobergher!)
