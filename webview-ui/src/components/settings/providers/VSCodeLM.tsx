@@ -2,7 +2,7 @@ import { useState, useCallback } from "react"
 import { useEvent } from "react-use"
 import { LanguageModelChatSelector } from "vscode"
 
-import type { ProviderSettings } from "@roo-code/types"
+import { openAiModelInfoSaneDefaults, type ProviderSettings } from "@roo-code/types"
 
 import { ExtensionMessage } from "@roo/ExtensionMessage"
 
@@ -10,6 +10,8 @@ import { useAppTranslation } from "@src/i18n/TranslationContext"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@src/components/ui"
 
 import { inputEventTransform } from "../transforms"
+import { ThinkingBudget } from "../ThinkingBudget"
+import { Checkbox } from "vscrui"
 
 type VSCodeLMProps = {
 	apiConfiguration: ProviderSettings
@@ -79,6 +81,33 @@ export const VSCodeLM = ({ apiConfiguration, setApiConfigurationField }: VSCodeL
 					<div className="text-sm text-vscode-descriptionForeground">
 						{t("settings:providers.vscodeLmDescription")}
 					</div>
+				)}
+			</div>
+			<div className="flex flex-col gap-1">
+				<Checkbox
+					checked={apiConfiguration.enableReasoningEffort ?? false}
+					onChange={(checked: boolean) => {
+						setApiConfigurationField("enableReasoningEffort", checked)
+					}}>
+					{t("settings:providers.setReasoningLevel")}
+				</Checkbox>
+				{!!apiConfiguration.enableReasoningEffort && (
+					<ThinkingBudget
+						apiConfiguration={{
+							...apiConfiguration,
+							reasoningEffort: apiConfiguration.reasoningEffort,
+						}}
+						setApiConfigurationField={(field, value) => {
+							if (field === "reasoningEffort") {
+								setApiConfigurationField("reasoningEffort", value)
+							}
+						}}
+						modelInfo={{
+							...openAiModelInfoSaneDefaults,
+							supportsReasoningEffort: true,
+							// supportsPromptCache: true,
+						}}
+					/>
 				)}
 			</div>
 			<div className="text-sm text-vscode-errorForeground">{t("settings:providers.vscodeLmWarning")}</div>

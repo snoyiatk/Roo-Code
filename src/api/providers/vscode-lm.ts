@@ -1,7 +1,7 @@
 import { Anthropic } from "@anthropic-ai/sdk"
 import * as vscode from "vscode"
 
-import { type ModelInfo, openAiModelInfoSaneDefaults } from "@roo-code/types"
+import { type ModelInfo, openAiModelInfoSaneDefaults, type ReasoningEffort } from "@roo-code/types"
 
 import type { ApiHandlerOptions } from "../../shared/api"
 import { SELECTOR_SEPARATOR, stringifyVsCodeLmModelSelector } from "../../shared/vsCodeSelectorUtils"
@@ -364,11 +364,15 @@ export class VsCodeLmHandler extends BaseProvider implements SingleCompletionHan
 			// Create the response stream with minimal required options
 			const requestOptions: vscode.LanguageModelChatRequestOptions = {
 				justification: `Roo Code would like to use '${client.name}' from '${client.vendor}', Click 'Allow' to proceed.`,
+				modelOptions: {
+					temperature: this.options.modelTemperature,
+					reasoning_effort: this.options.reasoningEffort,
+					verbosity: this.options.verbosity,
+				},
 			}
 
 			// Note: Tool support is currently provided by the VSCode Language Model API directly
 			// Extensions can register tools using vscode.lm.registerTool()
-
 			const response: vscode.LanguageModelChatResponse = await client.sendRequest(
 				vsCodeLmMessages,
 				requestOptions,
@@ -515,6 +519,15 @@ export class VsCodeLmHandler extends BaseProvider implements SingleCompletionHan
 				inputPrice: 0,
 				outputPrice: 0,
 				description: `VSCode Language Model: ${modelId}`,
+				supportsReasoningEffort: true,
+				// The global settings may include an extended "minimal" value (for GPT-5).
+				// ModelInfo only accepts "low" | "medium" | "high", so map "minimal" to "low".
+				reasoningEffort: (() => {
+					const opt = this.options.reasoningEffort as ReasoningEffort | "minimal" | undefined
+					if (opt === "minimal") return "low"
+					return opt ?? "medium"
+				})(),
+				supportsVerbosity: true,
 			}
 
 			return { id: modelId, info: modelInfo }
@@ -556,6 +569,57 @@ export class VsCodeLmHandler extends BaseProvider implements SingleCompletionHan
 				throw new Error(`VSCode LM completion error: ${error.message}`)
 			}
 			throw error
+		}
+	}
+}
+
+export function registerChatTools(context: vscode.ExtensionContext) {
+	context.subscriptions.push(vscode.lm.registerTool("ask_followup_questions", new AskFollowupQuestionsTool()))
+}
+
+interface IFollowUp {
+	suggest: string
+}
+interface IAskFollowupQuestions {
+	question: string
+	follow_up?: IFollowUp[]
+}
+
+export class AskFollowupQuestionsTool implements vscode.LanguageModelTool<IAskFollowupQuestions> {
+	async invoke(
+		options: vscode.LanguageModelToolInvocationOptions<IAskFollowupQuestions>,
+		token: vscode.CancellationToken,
+	) {
+		const params = options.input as IAskFollowupQuestions
+		let result = null
+		try {
+			// createQuickPick
+			// showQuickPick
+			result = await vscode.window.showInputBox(
+				{
+					ignoreFocusOut: true,
+					placeHolder: "Enter your answer",
+					prompt: params.question,
+					title: "Enter your answer",
+				},
+				token,
+			)
+		} catch (e) {
+			return new vscode.LanguageModelToolResult([new vscode.LanguageModelTextPart((e as Error).message)])
+		}
+		return new vscode.LanguageModelToolResult([new vscode.LanguageModelTextPart(result || "")])
+	}
+
+	async prepareInvocation?(
+		options: vscode.LanguageModelToolInvocationPrepareOptions<IAskFollowupQuestions>,
+		token: vscode.CancellationToken,
+	) {
+		return {
+			invocationMessage: "Please answer my question",
+			confirmationMessages: {
+				title: "Confirm",
+				message: "Run the ask followup question tools?",
+			},
 		}
 	}
 }
